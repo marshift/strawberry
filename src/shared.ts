@@ -4,12 +4,8 @@ export type PatchType = "a" | "b" | "i";
 export const patchTypes: PatchType[] = ["a", "b", "i"];
 
 export type Patch = {
-  // function name
-  n: string;
   // original function
   o: Function;
-  // WeakRef to parent object
-  p: WeakRef<any>;
   // cleanups
   c: Function[];
   // after hooks

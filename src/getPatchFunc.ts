@@ -12,22 +12,20 @@ export default <CallbackType extends Function>(patchType: PatchType) =>
     funcName: string,
     funcParent: any,
     callback: CallbackType,
-    oneTime = false
+    oneTime = false,
   ) => {
     let origFunc = funcParent[funcName];
 
     if (typeof origFunc !== "function")
       throw new Error(
-        `${funcName} is not a function in ${funcParent.constructor.name}`
+        `${funcName} is not a function in ${funcParent.constructor.name}`,
       );
 
     let funcPatch = patchedFunctions.get(origFunc);
 
     if (!funcPatch) {
       funcPatch = {
-        n: funcName,
         o: origFunc,
-        p: new WeakRef(funcParent),
         c: [],
         b: new Map(),
         i: new Map(),
@@ -47,7 +45,7 @@ export default <CallbackType extends Function>(patchType: PatchType) =>
       const runHook: any = (
         ctxt: unknown,
         args: unknown[],
-        construct: boolean
+        construct: boolean,
       ) => hook(replaceProxy, origFunc, args, ctxt, construct);
 
       patchedFunctions.set(replaceProxy, funcPatch);
@@ -63,8 +61,9 @@ export default <CallbackType extends Function>(patchType: PatchType) =>
     }
 
     const hookId = Symbol();
-    const funcPatchRef = new WeakRef(funcPatch);
-    const unpatchThisPatch = () => unpatch(funcPatchRef, hookId, patchType);
+
+    const patchedFunc = funcParent[funcName];
+    const unpatchThisPatch = () => unpatch(patchedFunc, hookId, patchType);
 
     if (oneTime) funcPatch.c.push(unpatchThisPatch);
     funcPatch[patchType].set(hookId, callback);
