@@ -1,2 +1,2 @@
 # strawberry
-javascript function patcher
+javascript function patcher, hard-fork of [spitroast](//github.com/Cumcord/spitroast).
