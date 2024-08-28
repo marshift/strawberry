@@ -1,4 +1,4 @@
-import { PatchType, Patch, patchTypes, patchedFunctions } from "./shared";
+import { type PatchType, patchedFunctions } from "./shared";
 
 export function unpatch(
   patchedFunction: Function,

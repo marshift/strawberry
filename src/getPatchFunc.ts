@@ -3,7 +3,7 @@
 // functional programming strikes again! -- sink
 
 import hook from "./hook";
-import { PatchType, patchedFunctions } from "./shared";
+import { type PatchType, patchedFunctions } from "./shared";
 import { unpatch } from "./unpatch";
 
 // creates a hook if needed, else just adds one to the patches array

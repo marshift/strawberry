@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { afterEach, beforeEach, describe, it } from "mocha";
 
-import SR from "../dist/cjs.js";
+import * as SR from "../dist/index.mjs";
 
 const testFuncs = {};
 
@@ -152,7 +152,7 @@ describe("spitroast unpatches", () => {
     SR.after("passthru", testFuncs, ([], ret) => ret + "_patched");
 
     SR.instead("contextual", testFuncs, ([a], orig) =>
-      orig.call({ x: 1, y: 1, z: "a" }, a - 4)
+      orig.call({ x: 1, y: 1, z: "a" }, a - 4),
     );
 
     SR.unpatchAll();
