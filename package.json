@@ -1,7 +1,7 @@
 {
-  "name": "spitroast",
-  "version": "2.0.2",
-  "description": "A simple JavaScript function patcher.",
+  "name": "strawberry",
+  "version": "1.0.0",
+  "description": "javascript function patcher",
   "main": "dist/cjs.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
@@ -9,11 +9,7 @@
     "test": "npm run prepublish && mocha",
     "prepublish": "tspc && esbuild --bundle src/index.ts --outfile=dist/cjs.js --format=cjs"
   },
-  "repository": {
-    "type": "git",
-    "url": "github.com/Cumcord/spitroast"
-  },
-  "author": "creatable",
+  "author": "marshift & uwu.network",
   "license": "CC0-1.0",
   "devDependencies": {
     "@types/node": "^20.11.25",
