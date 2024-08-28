@@ -8,5 +8,5 @@ const before = getPatchFunc<BeforeCallback>("b");
 const instead = getPatchFunc<InsteadCallback>("i");
 const after = getPatchFunc<AfterCallback>("a");
 
-export { instead, before, after };
+export { after, before, instead };
 export { resetPatches as unpatchAll } from "./shared";

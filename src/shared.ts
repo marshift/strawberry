@@ -4,19 +4,18 @@ export type PatchType = "a" | "b" | "i";
 export const patchTypes: PatchType[] = ["a", "b", "i"];
 
 export type Patch = {
-  // cleanups
-  c: Function[];
-  // after hooks
-  a: Map<symbol, Function>;
-  // before hooks
-  b: Map<symbol, Function>;
-  // instead hooks
-  i: Map<symbol, Function>;
+	// cleanups
+	c: Function[];
+	// after hooks
+	a: Map<symbol, Function>;
+	// before hooks
+	b: Map<symbol, Function>;
+	// instead hooks
+	i: Map<symbol, Function>;
 };
 
 export let patchedFunctions: WeakMap<Function, Patch>;
-export let resetPatches = () =>
-  (patchedFunctions = new WeakMap<Function, Patch>());
+export let resetPatches = () => (patchedFunctions = new WeakMap<Function, Patch>());
 
 // Manual minification is funny
 resetPatches();
