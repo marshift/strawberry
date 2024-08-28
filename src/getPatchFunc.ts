@@ -25,7 +25,6 @@ export default <CallbackType extends Function>(patchType: PatchType) =>
 
     if (!funcPatch) {
       funcPatch = {
-        o: origFunc,
         c: [],
         b: new Map(),
         i: new Map(),

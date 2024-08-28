@@ -4,8 +4,6 @@ export type PatchType = "a" | "b" | "i";
 export const patchTypes: PatchType[] = ["a", "b", "i"];
 
 export type Patch = {
-  // original function
-  o: Function;
   // cleanups
   c: Function[];
   // after hooks
