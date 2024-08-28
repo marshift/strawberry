@@ -1,19 +1,17 @@
 {
   "name": "strawberry",
   "description": "javascript function patcher",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "npm run prepublish && mocha",
-    "prepublish": "tsup src/index.ts --dts --format esm,cjs"
+    "prepublish": "tsup ./src/index.ts --dts --format esm,cjs",
+    "test": "npm run prepublish && node --no-warnings --import ./test/setup.mjs --test ./test/index.mjs"
   },
   "author": "marshift & uwu.network",
   "license": "CC0-1.0",
   "devDependencies": {
     "@types/node": "^22.5.1",
-    "chai": "^5.1.1",
-    "mocha": "^10.7.3",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4"
   }
