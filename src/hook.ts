@@ -1,42 +1,42 @@
-// calls relevant patches and returns the final result
-import { patchedFunctions } from "./shared";
+// Calls relevant patches and returns the final result
+import { patchedFunctions } from "./patcher";
 
-export default function(
+export default (
 	patchedFunc: Function,
 	origFunc: Function,
 	funcArgs: unknown[],
-	// the value of `this` to apply
-	ctxt: any,
-	// if true, the function is actually constructor
+	// The value of `this` to apply
+	ctx: any,
+	// If true, the function is actually constructor
 	isConstruct: boolean,
-) {
+) => {
 	const patch = patchedFunctions.get(patchedFunc);
 
 	if (!patch) {
 		return isConstruct
-			? Reflect.construct(origFunc, funcArgs, ctxt)
-			: origFunc.apply(ctxt, funcArgs);
+			? Reflect.construct(origFunc, funcArgs, ctx)
+			: origFunc.apply(ctx, funcArgs);
 	}
 
 	// Before patches
 	for (const hook of patch.b.values()) {
-		const maybefuncArgs = hook.call(ctxt, funcArgs);
+		const maybefuncArgs = hook.call(ctx, funcArgs);
 		if (Array.isArray(maybefuncArgs)) funcArgs = maybefuncArgs;
 	}
 
 	// Instead patches
 	let workingRetVal = [...patch.i.values()].reduce(
-		(prev, current) => (...args: unknown[]) => current.call(ctxt, args, prev),
+		(prev, current) => (...args: unknown[]) => current.call(ctx, args, prev),
 		// This calls the original function
 		(...args: unknown[]) =>
 			isConstruct
-				? Reflect.construct(origFunc, args, ctxt)
-				: origFunc.apply(ctxt, args),
+				? Reflect.construct(origFunc, args, ctx)
+				: origFunc.apply(ctx, args),
 	)(...funcArgs);
 
 	// After patches
 	for (const hook of patch.a.values()) {
-		workingRetVal = hook.call(ctxt, funcArgs, workingRetVal) ?? workingRetVal;
+		workingRetVal = hook.call(ctx, funcArgs, workingRetVal) ?? workingRetVal;
 	}
 
 	// Cleanups (one-times)
@@ -44,4 +44,4 @@ export default function(
 	patch.c = [];
 
 	return workingRetVal;
-}
+};
