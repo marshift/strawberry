@@ -4,10 +4,10 @@ import { beforeEach } from "node:test";
 beforeEach(() => {
 	globalThis.testFuncs = {};
 
-	// for testing basic single patch-unpatch
+	// For testing basic single patch-unpatch
 	testFuncs.simple = (a, b) => a + b;
 
-	// now we know that works, for testing context
+	// Now we know that works, for testing context
 	testFuncs.contextual = function(a) {
 		isNotEqual(this?.x, undefined);
 		isNotEqual(this.y, undefined);
@@ -15,6 +15,6 @@ beforeEach(() => {
 		return (this.x - a) / this.y + this.z;
 	};
 
-	// now we know patching works, for testing patch composing
+	// Now we know patching works, for testing patch composing
 	testFuncs.passthru = (a) => a;
 });
