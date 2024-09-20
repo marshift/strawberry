@@ -3,14 +3,14 @@ import hook from "./hook";
 type PatchType = "b" | "i" | "a";
 
 interface Patch {
-	// Cleanups
-	c: Function[];
-	// After hooks
-	a: Map<symbol, Function>;
 	// Before hooks
 	b: Map<symbol, Function>;
 	// Instead hooks
 	i: Map<symbol, Function>;
+	// After hooks
+	a: Map<symbol, Function>;
+	// Cleanups
+	c: Function[];
 }
 
 interface CallbackTypes {
@@ -42,10 +42,10 @@ export const getPatchFunc = <T extends PatchType>(patchType: T) =>
 
 	if (!funcPatch) {
 		funcPatch = {
-			c: [],
 			b: new Map(),
 			i: new Map(),
 			a: new Map(),
+			c: [],
 		};
 
 		const replaceProxy = new Proxy(origFunc, {

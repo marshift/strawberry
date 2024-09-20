@@ -4,4 +4,4 @@ const before = getPatchFunc("b");
 const instead = getPatchFunc("i");
 const after = getPatchFunc("a");
 
-export { after, before, instead, unpatchAll };
+export { before, instead, after, unpatchAll };
