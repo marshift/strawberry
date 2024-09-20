@@ -4,37 +4,37 @@ import { after, before, instead, unpatchAll } from "../../dist/index.mjs";
 
 describe("strawberry unpatches", () => {
 	it("should be able to unpatch the most recent on a given func", () => {
-		after("passthru", testFuncs, ([], ret) => ret + "a");
-		const unpatch = after("passthru", testFuncs, ([], ret) => ret + "b");
+		after(testFuncs, "passthru", ([], ret) => ret + "a");
+		const unpatch = after(testFuncs, "passthru", ([], ret) => ret + "b");
 
 		unpatch();
 		isEqual(testFuncs.passthru("x_"), "x_a");
 	});
 
 	it("should be able to unpatch the first on a given func", () => {
-		const unpatch = after("passthru", testFuncs, ([], ret) => ret + "a");
-		after("passthru", testFuncs, ([], ret) => ret + "b");
+		const unpatch = after(testFuncs, "passthru", ([], ret) => ret + "a");
+		after(testFuncs, "passthru", ([], ret) => ret + "b");
 
 		unpatch();
 		isEqual(testFuncs.passthru("x_"), "x_b");
 	});
 
 	it("should be able to unpatch an in-between on a given func", () => {
-		after("passthru", testFuncs, ([], ret) => ret + "a");
-		const unpatch = after("passthru", testFuncs, ([], ret) => ret + "b");
-		after("passthru", testFuncs, ([], ret) => ret + "c");
+		after(testFuncs, "passthru", ([], ret) => ret + "a");
+		const unpatch = after(testFuncs, "passthru", ([], ret) => ret + "b");
+		after(testFuncs, "passthru", ([], ret) => ret + "c");
 
 		unpatch();
 		isEqual(testFuncs.passthru("x_"), "x_ac");
 	});
 
 	it("should be able to completely unpatch", () => {
-		before("simple", testFuncs, ([a, b]) => [a + 1, b + 1]);
-		after("simple", testFuncs, ([], ret) => ret / 2);
+		before(testFuncs, "simple", ([a, b]) => [a + 1, b + 1]);
+		after(testFuncs, "simple", ([], ret) => ret / 2);
 
-		after("passthru", testFuncs, ([], ret) => ret + "_patched");
+		after(testFuncs, "passthru", ([], ret) => ret + "_patched");
 
-		instead("contextual", testFuncs, ([a], orig) => orig.call({ x: 1, y: 1, z: "a" }, a - 4));
+		instead(testFuncs, "contextual", ([a], orig) => orig.call({ x: 1, y: 1, z: "a" }, a - 4));
 
 		unpatchAll();
 

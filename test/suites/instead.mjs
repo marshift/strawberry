@@ -4,13 +4,13 @@ import { instead } from "../../dist/index.mjs";
 
 describe("strawberry instead patches", () => {
 	it("should patch a simple func", () => {
-		instead("simple", testFuncs, ([a, b], orig) => orig(a + b, b - a) * b);
+		instead(testFuncs, "simple", ([a, b], orig) => orig(a + b, b - a) * b);
 
 		isEqual(testFuncs.simple(1, 2), 8);
 	});
 
 	it("should be unpatchable", () => {
-		const unpatch = instead("simple", testFuncs, () => 0);
+		const unpatch = instead(testFuncs, "simple", () => 0);
 
 		unpatch();
 
@@ -18,7 +18,7 @@ describe("strawberry instead patches", () => {
 	});
 
 	it("should maintain context", () => {
-		instead("contextual", testFuncs, function(args, orig) {
+		instead(testFuncs, "contextual", function(args, orig) {
 			isEqual(this?.x, 17);
 			isEqual(this.y, 5);
 			isEqual(this.z, "test");

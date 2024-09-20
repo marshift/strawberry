@@ -20,13 +20,12 @@ interface CallbackTypes {
 }
 
 // TODO: I don't really like using currying here.
-// Not only is it just somewhat unclear to me, it's going to cause issues
-// in future when I swap funcName and funcParent and make `strawberry/compat`
+// Not only is it just somewhat unclear to me, it's going to cause issues for `strawberry/compat`
 // It works for now though, I suppose.
 export const getPatchFunc = <T extends PatchType>(patchType: T) =>
-(
-	funcName: string,
-	funcParent: any,
+<P extends Record<any, any>>(
+	funcParent: P,
+	funcName: keyof P,
 	callback: CallbackTypes[typeof patchType],
 	oneTime = false,
 ) => {
@@ -34,7 +33,7 @@ export const getPatchFunc = <T extends PatchType>(patchType: T) =>
 
 	if (typeof origFunc !== "function") {
 		throw new Error(
-			`${funcName} is not a function in ${funcParent.constructor.name}`,
+			`${String(funcName)} is not a function in ${funcParent.constructor.name}`,
 		);
 	}
 

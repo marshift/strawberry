@@ -4,13 +4,13 @@ import { after } from "../../dist/index.mjs";
 
 describe("strawberry after patches", () => {
 	it("should patch a simple func", () => {
-		after("simple", testFuncs, ([, b], ret) => ret * b);
+		after(testFuncs, "simple", ([, b], ret) => ret * b);
 
 		isEqual(testFuncs.simple(1, 2), 6);
 	});
 
 	it("should be unpatchable", () => {
-		const unpatch = after("simple", testFuncs, () => 0);
+		const unpatch = after(testFuncs, "simple", () => 0);
 
 		unpatch();
 
@@ -18,7 +18,7 @@ describe("strawberry after patches", () => {
 	});
 
 	it("should maintain context", () => {
-		after("contextual", testFuncs, function() {
+		after(testFuncs, "contextual", function() {
 			isEqual(this?.x, 17);
 			isEqual(this.y, 5);
 			isEqual(this.z, "test");
