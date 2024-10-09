@@ -1,7 +1,7 @@
 {
-	"name": "strawberry",
+	"name": "@marshift/strawberry",
 	"description": "javascript function patcher",
-	"version": "1.4.0",
+	"version": "1.4.1",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
 	"types": "dist/index.d.ts",
