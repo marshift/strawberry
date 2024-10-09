@@ -20,9 +20,6 @@ interface CallbackTypes<F extends (...args: any[]) => any> {
 	a: (args: Parameters<F>, ret: ReturnType<F>) => ReturnType<F> | any;
 }
 
-// TODO: I don't really like using currying here.
-// Not only is it just somewhat unclear to me, it's going to cause issues for `strawberry/compat`
-// It works for now though, I suppose.
 export const getPatchFunc = <T extends PatchType>(patchType: T) =>
 <P extends Record<any, any>, N extends keyof P>(
 	funcParent: P,
