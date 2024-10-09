@@ -13,20 +13,21 @@ interface Patch {
 	c: Function[];
 }
 
-interface CallbackTypes {
-	b: (args: any[]) => void | undefined | any[];
-	i: (args: any[], origFunc: Function) => any;
-	a: (args: any[], ret: any) => void | undefined | any;
+// These types are about as accurate as I can get, if a little redundant
+interface CallbackTypes<F extends (...args: any[]) => any> {
+	b: (args: Parameters<F> | any) => Parameters<F> | any;
+	i: (args: Parameters<F>, origFunc: F) => ReturnType<F> | any;
+	a: (args: Parameters<F>, ret: ReturnType<F>) => ReturnType<F> | any;
 }
 
 // TODO: I don't really like using currying here.
 // Not only is it just somewhat unclear to me, it's going to cause issues for `strawberry/compat`
 // It works for now though, I suppose.
 export const getPatchFunc = <T extends PatchType>(patchType: T) =>
-<P extends Record<any, any>>(
+<P extends Record<any, any>, N extends keyof P>(
 	funcParent: P,
-	funcName: keyof P,
-	callback: CallbackTypes[typeof patchType],
+	funcName: N,
+	callback: CallbackTypes<P[N]>[T],
 	oneTime = false,
 ) => {
 	let origFunc = funcParent[funcName];
