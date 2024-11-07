@@ -13,11 +13,11 @@ interface Patch {
 	c: Function[];
 }
 
-// These types are about as accurate as I can get, if a little redundant
+// These might be a bit strict, but the user can cast if needed
 interface CallbackTypes<F extends (...args: any[]) => any> {
-	b: (args: Parameters<F> | any) => Parameters<F> | any;
-	i: (args: Parameters<F>, origFunc: NonNullable<F>) => ReturnType<F> | any;
-	a: (args: Parameters<F>, ret: ReturnType<F>) => ReturnType<F> | any;
+	b: (args: Parameters<F>) => Parameters<F> | undefined;
+	i: (args: Parameters<F>, origFunc: NonNullable<F>) => ReturnType<F>;
+	a: (args: Parameters<F>, ret: ReturnType<F>) => ReturnType<F> | undefined;
 }
 
 export const getPatchFunc = <T extends PatchType>(patchType: T) =>
