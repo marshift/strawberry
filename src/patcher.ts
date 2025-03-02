@@ -28,7 +28,6 @@ export const getPatchFunc = <T extends PatchType>(patchType: T) =>
 	oneTime = false,
 ) => {
 	let origFunc = funcParent[funcName];
-
 	if (typeof origFunc !== "function") {
 		throw new Error(
 			`${String(funcName)} is not a function in ${funcParent.constructor.name}`,
@@ -36,7 +35,6 @@ export const getPatchFunc = <T extends PatchType>(patchType: T) =>
 	}
 
 	let funcPatch = patchedFunctions.get(origFunc);
-
 	if (!funcPatch) {
 		funcPatch = {
 			b: new Map(),
@@ -56,10 +54,19 @@ export const getPatchFunc = <T extends PatchType>(patchType: T) =>
 		});
 
 		const runHook: any = (
-			ctx: unknown,
+			ctx: Function,
 			args: unknown[],
 			construct: boolean,
-		) => hook(replaceProxy, origFunc, args, ctx, construct);
+		) =>
+			hook(
+				replaceProxy,
+				(...args: unknown[]) =>
+					construct
+						? Reflect.construct(origFunc, args, ctx)
+						: origFunc.apply(ctx, args),
+				args,
+				ctx,
+			);
 
 		patchedFunctions.set(replaceProxy, funcPatch);
 

@@ -4,39 +4,28 @@ import { patchedFunctions } from "./patcher";
 export default (
 	patchedFunc: Function,
 	origFunc: Function,
-	funcArgs: unknown[],
+	args: unknown[],
 	// The value of `this` to apply
 	ctx: any,
-	// If true, the function is actually constructor
-	isConstruct: boolean,
 ) => {
 	const patch = patchedFunctions.get(patchedFunc);
-
-	if (!patch) {
-		return isConstruct
-			? Reflect.construct(origFunc, funcArgs, ctx)
-			: origFunc.apply(ctx, funcArgs);
-	}
+	if (!patch) return origFunc(...args);
 
 	// Before patches
 	for (const hook of patch.b.values()) {
-		const maybefuncArgs = hook.call(ctx, funcArgs);
-		if (Array.isArray(maybefuncArgs)) funcArgs = maybefuncArgs;
+		const maybeArgs = hook.call(ctx, args);
+		if (Array.isArray(maybeArgs)) args = maybeArgs;
 	}
 
 	// Instead patches
 	let workingRetVal = [...patch.i.values()].reduce(
 		(prev, current) => (...args: unknown[]) => current.call(ctx, args, prev),
-		// This calls the original function
-		(...args: unknown[]) =>
-			isConstruct
-				? Reflect.construct(origFunc, args, ctx)
-				: origFunc.apply(ctx, args),
-	)(...funcArgs);
+		origFunc,
+	)(...args);
 
 	// After patches
 	for (const hook of patch.a.values()) {
-		workingRetVal = hook.call(ctx, funcArgs, workingRetVal) ?? workingRetVal;
+		workingRetVal = hook.call(ctx, args, workingRetVal) ?? workingRetVal;
 	}
 
 	// Cleanups (one-times)
