@@ -1,16 +1,20 @@
 {
 	"name": "@marshift/strawberry",
 	"description": "javascript function patcher",
+	"author": "marshift & uwu.network",
 	"version": "1.5.1",
-	"main": "dist/index.js",
-	"module": "dist/index.mjs",
-	"types": "dist/index.d.ts",
+	"license": "CC0-1.0",
 	"scripts": {
 		"prepublish": "tsup ./src/index.ts --dts --format esm,cjs",
 		"test": "npm run prepublish && node --no-warnings --import ./test/setup.mjs --test ./test/index.mjs"
 	},
-	"author": "marshift & uwu.network",
-	"license": "CC0-1.0",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		}
+	},
 	"devDependencies": {
 		"@types/node": "^22.15.21",
 		"tsup": "^8.5.0",
