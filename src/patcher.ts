@@ -27,7 +27,7 @@ export const getPatchFunc = <T extends PatchType>(patchType: T) =>
 	callback: CallbackTypes<P[N]>[T],
 	oneTime = false,
 ) => {
-	let origFunc = funcParent[funcName];
+	let origFunc: Function = funcParent[funcName];
 	if (typeof origFunc !== "function") {
 		throw new Error(
 			`${String(funcName)} is not a function in ${funcParent.constructor.name}`,
@@ -46,11 +46,12 @@ export const getPatchFunc = <T extends PatchType>(patchType: T) =>
 		const replaceProxy = new Proxy(origFunc, {
 			apply: (_, ctx, args) => runHook(ctx, args, false),
 			construct: (_, args) => runHook(origFunc, args, true),
-
-			get: (target, prop, receiver) =>
-				prop == "toString"
-					? origFunc.toString.bind(origFunc)
-					: Reflect.get(target, prop, receiver),
+			get: (target, prop, receiver) => {
+				const res = Reflect.get(target, prop, receiver);
+				return typeof res === "function"
+					? res.bind(origFunc)
+					: res;
+			},
 		});
 
 		const runHook: any = (
@@ -77,7 +78,7 @@ export const getPatchFunc = <T extends PatchType>(patchType: T) =>
 				writable: true,
 			})
 		) {
-			funcParent[funcName] = replaceProxy;
+			funcParent[funcName] = replaceProxy as P[N];
 		}
 	}
 
