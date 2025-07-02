@@ -1,6 +1,6 @@
 import { equal as isEqual } from "node:assert/strict";
 import { describe, it } from "node:test";
-import { after, before, instead, unpatchAll } from "../../dist/index.mjs";
+import { after, before, instead, unpatchAll } from "../../dist/index.js";
 
 describe("strawberry unpatches", () => {
 	it("should be able to unpatch the most recent on a given func", () => {

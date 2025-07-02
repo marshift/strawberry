@@ -1,16 +1,16 @@
 import { equal as isEqual } from "node:assert/strict";
 import { describe, it } from "node:test";
-import { after } from "../../dist/index.mjs";
+import { instead } from "../../dist/index.js";
 
-describe("strawberry after patches", () => {
+describe("strawberry instead patches", () => {
 	it("should patch a simple func", () => {
-		after(testFuncs, "simple", ([, b], ret) => ret * b);
+		instead(testFuncs, "simple", ([a, b], orig) => orig(a + b, b - a) * b);
 
-		isEqual(testFuncs.simple(1, 2), 6);
+		isEqual(testFuncs.simple(1, 2), 8);
 	});
 
 	it("should be unpatchable", () => {
-		const unpatch = after(testFuncs, "simple", () => 0);
+		const unpatch = instead(testFuncs, "simple", () => 0);
 
 		unpatch();
 
@@ -18,10 +18,12 @@ describe("strawberry after patches", () => {
 	});
 
 	it("should maintain context", () => {
-		after(testFuncs, "contextual", function() {
+		instead(testFuncs, "contextual", function(args, orig) {
 			isEqual(this?.x, 17);
 			isEqual(this.y, 5);
 			isEqual(this.z, "test");
+
+			return orig.apply(this, args);
 		});
 
 		const ctx = { x: 17, y: 5, z: "test" };
