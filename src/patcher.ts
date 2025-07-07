@@ -93,6 +93,12 @@ export const getPatchFunc = <T extends PatchType>(patchType: T) =>
 	return unpatchThisPatch;
 };
 
+export let patchedFunctions: WeakMap<Function, Patch>;
+
+export const before = getPatchFunc("b");
+export const instead = getPatchFunc("i");
+export const after = getPatchFunc("a");
+
 export function unpatch(
 	patchedFunction: Function,
 	hookId: symbol,
@@ -100,10 +106,8 @@ export function unpatch(
 ) {
 	const patch = patchedFunctions.get(patchedFunction);
 	if (!patch || !patch[type].delete(hookId)) return false;
-
 	return true;
 }
 
-export let patchedFunctions: WeakMap<Function, Patch>;
 export const unpatchAll = () => !!(patchedFunctions = new WeakMap<Function, Patch>());
 unpatchAll(); // HACK: Create the patchedFunctions array initially

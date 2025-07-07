@@ -1,7 +1,2 @@
-import { getPatchFunc, unpatchAll } from "./patcher";
-
-const before = getPatchFunc("b");
-const instead = getPatchFunc("i");
-const after = getPatchFunc("a");
-
-export { before, instead, after, unpatchAll };
+export { after, before, instead, unpatchAll } from "./patcher";
+export { Patcher } from "./scoped";
