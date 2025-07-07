@@ -20,78 +20,79 @@ interface CallbackTypes<F extends (...args: any[]) => any> {
 	a: (args: Parameters<F>, ret: ReturnType<F>) => ReturnType<F> | void | undefined;
 }
 
-export const getPatchFunc = <T extends PatchType>(patchType: T) =>
-<P extends Record<any, any>, N extends keyof P>(
-	funcParent: P,
-	funcName: N,
-	callback: CallbackTypes<P[N]>[T],
-	oneTime = false,
-) => {
-	let origFunc: Function = funcParent[funcName];
-	if (typeof origFunc !== "function") {
-		throw new Error(
-			`${String(funcName)} is not a function in ${funcParent.constructor.name}`,
-		);
-	}
-
-	let funcPatch = patchedFunctions.get(origFunc);
-	if (!funcPatch) {
-		funcPatch = {
-			b: new Map(),
-			i: new Map(),
-			a: new Map(),
-			c: [],
-		};
-
-		const replaceProxy = new Proxy(origFunc, {
-			apply: (_, ctx, args) => runHook(ctx, args, false),
-			construct: (_, args) => runHook(origFunc, args, true),
-			get: (target, prop, receiver) => {
-				const res = Reflect.get(target, prop, receiver);
-				return typeof res === "function"
-					? res.bind(origFunc)
-					: res;
-			},
-		});
-
-		const runHook: any = (
-			ctx: Function,
-			args: unknown[],
-			construct: boolean,
-		) =>
-			hook(
-				replaceProxy,
-				(...args: unknown[]) =>
-					construct
-						? Reflect.construct(origFunc, args, ctx)
-						: origFunc.apply(ctx, args),
-				args,
-				ctx,
+export const getPatchFunc =
+	<T extends PatchType>(patchType: T) =>
+	<P extends Record<PropertyKey, any>, N extends keyof P>(
+		funcParent: P,
+		funcName: N,
+		callback: CallbackTypes<P[N]>[T],
+		oneTime = false,
+	) => {
+		let origFunc: Function = funcParent[funcName];
+		if (typeof origFunc !== "function") {
+			throw new Error(
+				`${String(funcName)} is not a function in ${funcParent.constructor.name}`,
 			);
-
-		patchedFunctions.set(replaceProxy, funcPatch);
-
-		if (
-			!Reflect.defineProperty(funcParent, funcName, {
-				value: replaceProxy,
-				configurable: true,
-				writable: true,
-			})
-		) {
-			funcParent[funcName] = replaceProxy as P[N];
 		}
-	}
 
-	const hookId = Symbol();
+		let funcPatch = patchedFunctions.get(origFunc);
+		if (!funcPatch) {
+			funcPatch = {
+				b: new Map(),
+				i: new Map(),
+				a: new Map(),
+				c: [],
+			};
 
-	const patchedFunc = funcParent[funcName];
-	const unpatchThisPatch = () => unpatch(patchedFunc, hookId, patchType);
+			const replaceProxy = new Proxy(origFunc, {
+				apply: (_, ctx, args) => runHook(ctx, args, false),
+				construct: (_, args) => runHook(origFunc, args, true),
+				get: (target, prop, receiver) => {
+					const res = Reflect.get(target, prop, receiver);
+					return typeof res === "function"
+						? res.bind(origFunc)
+						: res;
+				},
+			});
 
-	if (oneTime) funcPatch.c.push(unpatchThisPatch);
-	funcPatch[patchType].set(hookId, callback);
+			const runHook: any = (
+				ctx: Function,
+				args: unknown[],
+				construct: boolean,
+			) =>
+				hook(
+					replaceProxy,
+					(...args: unknown[]) =>
+						construct
+							? Reflect.construct(origFunc, args, ctx)
+							: origFunc.apply(ctx, args),
+					args,
+					ctx,
+				);
 
-	return unpatchThisPatch;
-};
+			patchedFunctions.set(replaceProxy, funcPatch);
+
+			if (
+				!Reflect.defineProperty(funcParent, funcName, {
+					value: replaceProxy,
+					configurable: true,
+					writable: true,
+				})
+			) {
+				funcParent[funcName] = replaceProxy as P[N];
+			}
+		}
+
+		const hookId = Symbol();
+
+		const patchedFunc = funcParent[funcName];
+		const unpatchThisPatch = () => unpatch(patchedFunc, hookId, patchType);
+
+		if (oneTime) funcPatch.c.push(unpatchThisPatch);
+		funcPatch[patchType].set(hookId, callback);
+
+		return unpatchThisPatch;
+	};
 
 export let patchedFunctions: WeakMap<Function, Patch>;
 
