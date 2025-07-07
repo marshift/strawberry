@@ -105,5 +105,5 @@ export function unpatch(
 }
 
 export let patchedFunctions: WeakMap<Function, Patch>;
-export const unpatchAll = () => (patchedFunctions = new WeakMap<Function, Patch>());
+export const unpatchAll = () => !!(patchedFunctions = new WeakMap<Function, Patch>());
 unpatchAll(); // HACK: Create the patchedFunctions array initially
