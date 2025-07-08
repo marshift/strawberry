@@ -2,7 +2,7 @@
 	"name": "@marshift/strawberry",
 	"description": "javascript function patcher",
 	"author": "marshift & uwu.network",
-	"version": "1.7.1",
+	"version": "1.7.2",
 	"license": "CC0-1.0",
 	"type": "module",
 	"files": [
