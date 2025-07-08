@@ -6,7 +6,10 @@ export class Patcher {
 		((...args) => {
 			const unpatch = func.apply(func, args);
 			this.#unpatches.add(unpatch);
-			return unpatch;
+			return () => {
+				this.#unpatches.delete(unpatch);
+				return unpatch();
+			};
 		}) as T;
 
 	before = this.#wrapPatchFunc(before);
