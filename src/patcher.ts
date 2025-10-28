@@ -13,11 +13,16 @@ interface Patch {
 	c: Function[];
 }
 
+// :creature:
+type ParametersButBased<T extends (...args: any) => any> = T extends (...args: infer P) => any
+	? unknown[] extends P ? any : P
+	: never;
+
 // These might be a bit strict, but the user can cast if needed
 interface CallbackTypes<F extends (...args: any[]) => any> {
-	b: (args: Parameters<F>) => Parameters<F> | void | undefined;
-	i: (args: Parameters<F>, origFunc: NonNullable<F>) => ReturnType<F>;
-	a: (args: Parameters<F>, ret: ReturnType<F>) => ReturnType<F> | void | undefined;
+	b: (args: ParametersButBased<F>) => ParametersButBased<F> | void | undefined;
+	i: (args: ParametersButBased<F>, origFunc: NonNullable<F>) => ReturnType<F>;
+	a: (args: ParametersButBased<F>, ret: ReturnType<F>) => ReturnType<F> | void | undefined;
 }
 
 export const getPatchFunc =
