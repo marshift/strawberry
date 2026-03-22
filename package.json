@@ -30,8 +30,8 @@
 		"test": "npm run prepublish && node --no-warnings --import ./test/setup.js --test ./test/index.js"
 	},
 	"devDependencies": {
-		"@types/node": "^24.9.2",
-		"tsup": "^8.5.0",
+		"@types/node": "^25.5.0",
+		"tsup": "^8.5.1",
 		"typescript": "^5.9.3"
 	}
 }
