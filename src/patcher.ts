@@ -25,6 +25,8 @@ interface CallbackTypes<F extends (...args: any[]) => any> {
 	a: (args: ParametersButBased<F>, ret: ReturnType<F>) => ReturnType<F> | void | undefined;
 }
 
+const funcToString = Function.prototype.toString;
+
 export const getPatchFunc =
 	<T extends PatchType>(patchType: T) =>
 	<P extends Record<PropertyKey, any>, N extends keyof P>(
@@ -53,10 +55,10 @@ export const getPatchFunc =
 				apply: (_, ctx, args) => runHook(ctx, args, false),
 				construct: (_, args) => runHook(origFunc, args, true),
 				get: (target, prop, receiver) => {
-					const res = Reflect.get(target, prop, receiver);
-					return typeof res === "function"
-						? res.bind(origFunc)
-						: res;
+					const value = Reflect.get(target, prop, receiver);
+					return prop === "toString" && value === funcToString
+						? value.bind(origFunc)
+						: value;
 				},
 			});
 
